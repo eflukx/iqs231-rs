@@ -1,0 +1,14 @@
+[package]
+name = "iqs231"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bitflags = "2.5.0"
+defmt = { version = "0.3.8", optional = true }
+embedded-hal = "0.2"
+lis3dh = "0.4.3"
+num_enum = { version = "0.7.2", default-features = false }
+
+[features]
+defmt = ["dep:defmt"]
