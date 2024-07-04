@@ -4,10 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bitflags = "2.5.0"
+bitflags = "2.6.0"
 defmt = { version = "0.3.8", optional = true }
-embedded-hal = "0.2"
-lis3dh = "0.4.3"
+embedded-hal = "0.2" # We support eh v0.2.x now
+
+# possibly consider `bitbybit` as a more maintained (more verbose/explicit) alternative to `modular-bitfield` (?)
+modular-bitfield = "0.11.2"
 num_enum = { version = "0.7.2", default-features = false }
 
 [features]

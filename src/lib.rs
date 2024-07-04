@@ -1,7 +1,6 @@
 #![no_std]
 
 pub mod device;
-pub mod generics;
 pub mod registers;
 
 pub use device::Iqs231;
@@ -18,9 +17,13 @@ pub enum Error<IE> {
 
     /// Requested register does not exist
     InvalidRegister,
+
     /// Register is not writable
     RegisterNotWritable,
 
     /// Use `into_standalone()` to issue this the `STANDALONE` command,
     ShutdownCommandNotAllowed,
+
+    /// touch threshold should be 4..=1024
+    TouchThresholdOutOfRange,
 }
