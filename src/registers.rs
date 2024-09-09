@@ -6,17 +6,21 @@ use num_enum::{FromPrimitive, IntoPrimitive, TryFromPrimitive};
 use crate::Error;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-/// Struct for the values returned byt the sensor, wrapping the always returned `main_events` and the value itself
+/// Any read from the iqs231 includes (is prepended) by the `MainEvents` byte.
+/// The read functions return this struct wrapping `MainEvents` with the actual (register) value
 pub struct RegValue<T> {
     pub main_events: MainEvents,
     pub value: T,
 }
 
 impl<T> RegValue<T> {
+    /// Split the `RegValue` in a tuple containing the `MainEvents` and the value
     pub fn split(self) -> (MainEvents, T) {
         (self.main_events, self.value)
     }
 
+    /// Map the value in `RegValue` to a `RegValue` containing the result of the mapping function.
+    /// The `MainEvents` field is retained
     pub(crate) fn map<B, F>(self, f: F) -> RegValue<B>
     where
         F: FnOnce(T) -> B,
@@ -242,6 +246,7 @@ bitflags::bitflags! {
 }
 
 #[bitfield(bits = 8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OtpBank1 {
     pub touch_thresh: B2,
     pub ac_filter: B2,
@@ -272,6 +277,7 @@ impl From<u8> for ProximityThreshold {
 }
 
 #[bitfield(bits = 8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OtpBank2 {
     pub ui_select: UiSelect,
     pub quick_release: B1,
@@ -300,6 +306,7 @@ pub enum BaseValue {
 }
 
 #[bitfield(bits = 8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct OtpBank3 {
     pub sample_rate: SampleRate,
     pub ati_events_on_io1: B1,
@@ -337,8 +344,9 @@ pub enum ChargeTransferFrequency {
 }
 
 #[bitfield(bits = 8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct QuickRelease {
-    pub base: B4,
+    pub beta: B4,
     pub threshold: QuickReleaseThreshold,
 }
 
@@ -387,6 +395,7 @@ impl QuickReleaseThreshold {
 }
 
 #[bitfield(bits = 8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ChannelMultiplier {
     pub compensation_multiplier: B4,
     pub sensitivity_multiplier: B2,
@@ -413,7 +422,7 @@ fn otpbank3_bitfield_does_its_thing() {
 #[test]
 fn quickrelease_bitfield_does_its_thing() {
     let qr = QuickRelease::from_bytes([0xb4]);
-    assert_eq!(qr.base(), 4);
+    assert_eq!(qr.beta(), 4);
     assert_eq!(qr.threshold(), QuickReleaseThreshold::Qrt400);
     assert_eq!(qr.threshold().counts(), 400);
 
@@ -423,7 +432,7 @@ fn quickrelease_bitfield_does_its_thing() {
     assert_eq!(qrr.bytes, [0x95]);
 
     let qr2 = QuickRelease::from_bytes([0x4a]);
-    assert_eq!(qr2.base(), 0xa);
+    assert_eq!(qr2.beta(), 0xa);
     assert_eq!(qr2.threshold(), QuickReleaseThreshold::Qrt10);
     assert_eq!(qr2.threshold().counts(), 10);
 }

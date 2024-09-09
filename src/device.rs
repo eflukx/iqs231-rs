@@ -17,9 +17,9 @@ pub enum I2cAddress {
     /// Default I2C address
     Default = 0x44,
 
-    /// not used in normal operation
+    /// must/can not be used for normal operation
     Test = 0x45,
-    
+
     Alt1 = 0x46,
     Alt2 = 0x47,
 }
@@ -198,24 +198,11 @@ where
         Ok(UiFlags::from_bits_retain(value))
     }
 
-    pub fn get_event_flags(&mut self) -> Result<EventFlags, Error<E>> {
-        let value = self.read_reg(Register::EventFlags)?.value;
-        Ok(EventFlags::from_bits_retain(value))
-    }
-
-    pub fn get_otp_bank_1(&mut self) -> Result<RegValue<OtpBank1>, Error<E>> {
-        let rv = self.read_reg(Register::OtpBank1)?;
-        Ok(rv.map(|v| OtpBank1::from_bytes([v])))
-    }
-
-    pub fn get_otp_bank_2(&mut self) -> Result<RegValue<OtpBank2>, Error<E>> {
-        let rv = self.read_reg(Register::OtpBank2)?;
-        Ok(rv.map(|v| OtpBank2::from_bytes([v])))
-    }
-
-    pub fn get_otp_bank_3(&mut self) -> Result<RegValue<OtpBank3>, Error<E>> {
-        let rv = self.read_reg(Register::OtpBank3)?;
-        Ok(rv.map(|v| OtpBank3::from_bytes([v])))
+    pub fn get_event_flags(&mut self) -> Result<RegValue<EventFlags>, Error<E>> {
+        let reg = self
+            .read_reg(Register::EventFlags)?
+            .map(EventFlags::from_bits_retain);
+        Ok(reg)
     }
 
     pub fn set_quick_release(&mut self, quick_rel: QuickRelease) -> Result<(), Error<E>> {

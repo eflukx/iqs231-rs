@@ -1,6 +1,6 @@
 [package]
 name = "iqs231"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 [dependencies]
@@ -10,7 +10,7 @@ embedded-hal = "0.2" # We support eh v0.2.x now
 
 # possibly consider `bitbybit` as a more maintained (more verbose/explicit) alternative to `modular-bitfield` (?)
 modular-bitfield = "0.11.2"
-num_enum = { version = "0.7.2", default-features = false }
+num_enum = { version = "0.7.3", default-features = false }
 
 [features]
 defmt = ["dep:defmt"]

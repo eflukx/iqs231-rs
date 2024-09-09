@@ -27,3 +27,11 @@ pub enum Error<IE> {
     /// touch threshold should be 4..=1024
     TouchThresholdOutOfRange,
 }
+
+// Allow for quenching the error in a Result<_,()>
+impl<E> From<Error<E>> for ()
+{
+    fn from(value: Error<E>) -> Self {
+        ()
+    }
+}
