@@ -1,7 +1,7 @@
 // For the i2c register reference, see datasheet: https://www.azoteq.com/images/stories/pdf/iqs231a_datasheet.pdf (pg. 14 and pg. 30 onwards)
 use core::ops::Deref;
 use modular_bitfield::prelude::*;
-use num_enum::{FromPrimitive, IntoPrimitive, TryFromPrimitive};
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 
 use crate::Error;
 
@@ -254,7 +254,7 @@ pub struct OtpBank1 {
     pub i2c_addr: B2,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, BitfieldSpecifier, IntoPrimitive)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Specifier, IntoPrimitive)]
 #[repr(u8)]
 #[bits = 2]
 pub enum ProximityThreshold {
@@ -287,7 +287,7 @@ pub struct OtpBank2 {
     pub increase_debounce: bool,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, BitfieldSpecifier)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Specifier)]
 #[bits = 2]
 pub enum UiSelect {
     ProxNoMov,             //0x0
@@ -296,7 +296,7 @@ pub enum UiSelect {
     ProxWithMovTouchOnIo2, //0x3
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, BitfieldSpecifier)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Specifier)]
 #[bits = 2]
 pub enum BaseValue {
     Counts100, //0x0
@@ -316,7 +316,7 @@ pub struct OtpBank3 {
     pub charge_transfer_freq: ChargeTransferFrequency,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, BitfieldSpecifier)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Specifier)]
 #[bits = 2]
 pub enum SampleRate {
     _30Hz,  // 0x0 (57ms)
@@ -325,7 +325,7 @@ pub enum SampleRate {
     _4Hz,   // 0x3 (280ms)
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, BitfieldSpecifier)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Specifier)]
 #[bits = 2]
 pub enum Io2Function {
     Sensitivity, // 0x00 – Sensitivity input    (proximity threshold adjust)
@@ -334,7 +334,7 @@ pub enum Io2Function {
     Ignore,      // 0x11 – Ignore input, no output
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, BitfieldSpecifier)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Specifier)]
 #[bits = 2]
 pub enum ChargeTransferFrequency {
     _500kHz, // 0x00 – 500kHz
@@ -350,7 +350,7 @@ pub struct QuickRelease {
     pub threshold: QuickReleaseThreshold,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, BitfieldSpecifier)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Specifier)]
 #[bits = 4]
 pub enum QuickReleaseThreshold {
     Qrt100,  //0x0
@@ -399,6 +399,7 @@ impl QuickReleaseThreshold {
 pub struct ChannelMultiplier {
     pub compensation_multiplier: B4,
     pub sensitivity_multiplier: B2,
+    #[allow(unused)]
     reserved: B2,
 }
 
@@ -427,7 +428,7 @@ fn quickrelease_bitfield_does_its_thing() {
     assert_eq!(qr.threshold().counts(), 400);
 
     let qrr = QuickRelease::new()
-        .with_base(5)
+        .with_beta(5)
         .with_threshold(QuickReleaseThreshold::Qrt200);
     assert_eq!(qrr.bytes, [0x95]);
 

@@ -13,8 +13,8 @@ use crate::{
 #[repr(u8)]
 #[derive(Default, Clone, Copy, Debug, PartialEq, Eq, TryFromPrimitive)]
 pub enum I2cAddress {
-    #[default]
     /// Default I2C address
+    #[default]
     Default = 0x44,
 
     /// must/can not be used for normal operation
@@ -112,7 +112,7 @@ where
     }
 
     pub fn set_touch_threshold(&mut self, threshold: u16) -> Result<(), Error<E>> {
-        if threshold < 4 || threshold > 1024 {
+        if !(4..=1024).contains(&threshold) {
             Err(Error::TouchThresholdOutOfRange)
         } else {
             let value = (threshold - 4) >> 2;
@@ -352,7 +352,7 @@ where
                 .write(self.address as u8, &[reg as u8, value])
                 .map_err(|e| Error::IoError(e))
         } else {
-            Err(Error::RegisterNotWritable.into())
+            Err(Error::RegisterNotWritable)
         }
     }
 }

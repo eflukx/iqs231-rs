@@ -29,9 +29,6 @@ pub enum Error<IE> {
 }
 
 // Allow for quenching the error in a Result<_,()>
-impl<E> From<Error<E>> for ()
-{
-    fn from(value: Error<E>) -> Self {
-        ()
-    }
+impl<E> From<Error<E>> for () {
+    fn from(_value: Error<E>) -> Self {}
 }
